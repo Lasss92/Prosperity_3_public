@@ -1,5 +1,20 @@
-# Sir-Trades-a-Lot_Prosp_3 specs:
+# IMC Prosperity 3 — Sir Trades A Lot
 
-The format for the trading algorithm will be a predefined `Trader` class, which has a single method called `run` which contains all the trading logic coded up by the trader. Once the algorithm is uploaded it will be run in the simulation environment. The simulation consists of a large number of iterations. During each iteration the run method will be called and provided with a `TradingState` object. This object contains an overview of all the trades that have happened since the last iteration, both the algorithms own trades as well as trades that happened between other market participants. Even more importantly, the `TradingState` will contain a per product overview of all the outstanding buy and sell orders (also called “quotes”) originating from the bots. Based on the logic in the `run` method the algorithm can then decide to either send orders that will fully or partially match with the existing orders, e.g. sending a buy (sell) order with a price equal to or higher (lower) than one of the outstanding bot quotes, which will result in a trade. If the algorithm sends a buy (sell) order with an associated quantity that is larger than the bot sell (buy) quote that it is matched to, the remaining quantity will be left as an outstanding buy (sell) quote with which the trading bots will then potentially trade. When the next iteration begins, the `TradingState` will then reveal whether any of the bots decided to “trade on” the player’s outstanding quote. If none of the bots trade on an outstanding player quote, the quote is automatically cancelled at the end of the iteration.
+Algorithmic trading competition by IMC. Source code and analysis notebooks for each round.
 
-Every trade done by the algorithm in a certain product changes the “position” of the algorithm in that product. E.g. if the initial position in product X was 2 and the algorithm buys an additional quantity of 3, the position in product X is then 5. If the algorithm then subsequently sells a quantity of 7, the position in product X will be -2, called “short 2”. Like in the real world, the algorithms are restricted by per product position limits, which define the absolute position (lonsg or short) that the algorithm is not allowed to exceed. If the aggregated quantity of all the buy (sell) orders an algorithm sends during a certain iteration would, if all fully matched, result in the algorithm obtaining a long (short) position exceeding the position limit, all the orders are cancelled by the exchange.
+## Structure
+
+```
+tutorial_round/   # Warmup
+Round_1/          # RAINFOREST_RESIN, KELP, SQUID_INK
+Round_2/          # + CROISSANTS, JAMS, DJEMBES, PICNIC_BASKET
+Round_3/          # + VOLCANIC_ROCK & vouchers
+Round_4/          # + MAGNIFICENT_MACARONS
+Round_5/          # All products — final submission
+```
+
+Each folder contains a `trader.py` (submitted algorithm) and analysis notebooks.
+
+## How it works
+
+Each iteration, the engine calls `Trader.run(state: TradingState)` with the current order book and recent trades. The algorithm places orders to match bot quotes or leaves resting quotes for bots to fill. Positions are tracked per product and must stay within hard limits — breaching them cancels all orders for that iteration.
